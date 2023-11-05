@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+
+  mariadb:
+    build:
+      context: requirements/mariadb
+      args:
+        - MARIADB_DATABASE=${MYSQL_DATABASE}
+        - MARIADB_USER=${MYSQL_USER}
+        - MARIADB_PASSWORD=${MYSQL_PASSWORD}
+        - MARIADB_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+    image: inc_mariadb
+    container_name: mariadb
+    restart: unless-stopped
+    networks:
+      - inc_network
+    volumes:
+      - inc_data_db:/var/lib/mysql
+
+  wordpress:
+    depends_on:
+      - mariadb
+    build: requirements/wordpress
+    image: inc_wordpress
+    container_name: wordpress
+    restart: unless-stopped
+    environment:
+      WORDPRESS_DB_HOST: mariadb
+      WORDPRESS_DB_USER: ${MYSQL_USER}
+      WORDPRESS_DB_PASSWORD: ${MYSQL_PASSWORD}
+      WORDPRESS_DB_NAME: ${MYSQL_DATABASE}
+    networks:
+      - inc_network
+    volumes:
+      - inc_data_wp:/var/www/html
+
+  nginx:
+    depends_on:
+      - wordpress
+    build: requirements/nginx
+    image: inc_nginx
+    container_name: nginx
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - inc_network
+    volumes:
+      - inc_data_wp:/var/www/html
+      - ./requirements/nginx/conf:/etc/nginx/conf.d
+
+networks:
+  inc_network:
+    name: inc_network
+
+volumes:
+  inc_data_wp:
+    name: inc_data_wp
+  inc_data_db:
+    name: inc_data_db
