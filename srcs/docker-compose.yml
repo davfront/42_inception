@@ -59,5 +59,15 @@ networks:
 volumes:
   inc_data_wp:
     name: inc_data_wp
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${VOLUMES_DIR}/wp
   inc_data_db:
     name: inc_data_db
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${VOLUMES_DIR}/db
