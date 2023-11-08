@@ -10,6 +10,10 @@ stop:
 
 .PHONY: down
 down:
+	docker-compose -f srcs/docker-compose.yml down
+
+.PHONY: down-v
+down-v:
 	docker-compose -f srcs/docker-compose.yml down -v
 
 .PHONY: clean
