@@ -15,20 +15,20 @@ RUN apt update && apt install -y --no-install-recommends \
     openssl \
     && apt clean && rm -rf /var/lib/apt/lists/*
 
+# Download wp-cli
+ADD --chmod=755 https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar /usr/bin/wp
+
 # Install wordpress
-ADD https://wordpress.org/wordpress-6.3.2.tar.gz /tmp/wordpress-6.3.2.tar.gz
-RUN mkdir -p /var/www && \
-    tar -xzvf /tmp/wordpress-6.3.2.tar.gz -C /var/www && \
-    rm /tmp/wordpress-6.3.2.tar.gz && \
-    mv /var/www/wordpress /var/www/html
+COPY ./tools/install_wp.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/install_wp.sh
+ENTRYPOINT ["install_wp.sh"]
 
-# Adjust permissions
-RUN chown -R www-data:www-data /var/www/html
-
-# Configure PHP-FPM to listen on TCP socket instead of Unix socket
+# Configure PHP-FPM to listen on port 9000
 RUN sed -i 's/^listen = .*/listen = 9000/' /etc/php/7.3/fpm/pool.d/www.conf
+
+# Create directory for php-fpm socket
+RUN mkdir -p /run/php
 
 WORKDIR /var/www/html
 EXPOSE 9000
-RUN mkdir -p /run/php
 CMD ["php-fpm7.3", "-F"]
