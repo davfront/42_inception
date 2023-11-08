@@ -24,8 +24,6 @@ else
 		--admin_email="$WP_ADMIN_EMAIL" \
 		--path=/var/www/html/ --allow-root \
 
-	echo "wordpress: installed"
-
 	wp user create \
 		"$WP_USER" \
 		"$WP_USER_EMAIL" \
@@ -33,8 +31,6 @@ else
 		--user_pass="$WP_USER_PWD" \
 		--porcelain \
 		--path=/var/www/html/ --allow-root \
-
-	echo "wordpress: user created"
 
 	# Adjust permissions
 	chown -R www-data:www-data /var/www/html
