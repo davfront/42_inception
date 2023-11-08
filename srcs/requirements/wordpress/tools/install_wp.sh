@@ -7,7 +7,7 @@ if [ -f ./var/www/html/wp-config.php ]; then
 else
 
 	wp core download \
-		--version=6.3.2 \
+		--version="$WP_VERSION" \
 		--path=/var/www/html/ --allow-root
 
 	wp config create \
