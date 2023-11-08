@@ -24,7 +24,11 @@ RUN apt update && apt install -y --no-install-recommends \
     php7.4-xml \
     php7.4-zip \
     openssl \
-    && apt clean && rm -rf /var/lib/apt/lists/*
+    && apt clean && rm -rf /var/lib/apt/lists/* && \
+    # Configure PHP-FPM to listen on port 9000
+    sed -i 's/^listen = .*/listen = 9000/' /etc/php/7.4/fpm/pool.d/www.conf && \
+    # Create directory for php-fpm socket
+    mkdir -p /run/php
 
 # Download wp-cli
 ADD --chmod=755 https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar /usr/bin/wp
@@ -34,12 +38,7 @@ COPY ./tools/install_wp.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/install_wp.sh
 ENTRYPOINT ["install_wp.sh"]
 
-# Configure PHP-FPM to listen on port 9000
-RUN sed -i 's/^listen = .*/listen = 9000/' /etc/php/7.4/fpm/pool.d/www.conf
-
-# Create directory for php-fpm socket
-RUN mkdir -p /run/php
-
+# Start php-fpm
 WORKDIR /var/www/html
-EXPOSE 9000
 CMD ["php-fpm7.4", "-F"]
+EXPOSE 9000

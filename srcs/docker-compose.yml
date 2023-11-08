@@ -3,16 +3,11 @@ version: '3.8'
 services:
 
   mariadb:
-    build:
-      context: requirements/mariadb
-      args:
-        - MARIADB_DATABASE=${MYSQL_DATABASE}
-        - MARIADB_USER=${MYSQL_USER}
-        - MARIADB_PASSWORD=${MYSQL_PASSWORD}
-        - MARIADB_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+    build: requirements/mariadb
     image: inc_mariadb
     container_name: mariadb
     restart: unless-stopped
+    env_file: .env
     networks:
       - inc_network
     volumes:

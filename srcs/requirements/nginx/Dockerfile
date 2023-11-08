@@ -9,5 +9,6 @@ RUN apt update && \
 # Copy the configuration file
 COPY ./conf /etc/nginx/conf.d
 
-EXPOSE 80
+# Start nginx
 CMD ["nginx", "-g", "daemon off;"]
+EXPOSE 80

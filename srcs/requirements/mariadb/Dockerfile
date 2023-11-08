@@ -1,33 +1,18 @@
 FROM debian:buster
 
-# Define arguments
-ARG MARIADB_DATABASE
-ARG MARIADB_USER
-ARG MARIADB_PASSWORD
-ARG MARIADB_ROOT_PASSWORD
-
 # Install mariadb
 RUN apt update && \
     apt install -y --no-install-recommends mariadb-server && \
-    # apt install -y --no-install-recommends mariadb-client && \
     apt clean && \
-    rm -rf /var/lib/apt/lists/*
-# Purge and re-create /var/lib/mysql with appropriate ownership
-    # mkdir -p /var/run/mysqld && \
-    # chown -R mysql:mysql /var/run/mysqld && \
-# ensure that /var/run/mysqld is writable
-    # chmod 777 /var/run/mysqld
+    rm -rf /var/lib/apt/lists/* && \
+    # Listen on all interfaces
+    sed -i 's/^bind-address/# bind-address/' /etc/mysql/mariadb.conf.d/50-server.cnf
 
 # Create database
-RUN service mysql start && \
-    mysql -e "CREATE USER '${MARIADB_USER}'@'%' IDENTIFIED BY '${MARIADB_PASSWORD}';" && \
-    mysql -e "CREATE DATABASE ${MARIADB_DATABASE};" && \
-    mysql -e "GRANT ALL PRIVILEGES ON ${MARIADB_DATABASE}.* TO '${MARIADB_USER}'@'%';" && \
-    mysql -e "FLUSH PRIVILEGES;"
+COPY ./tools/create_db.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/create_db.sh
+ENTRYPOINT ["/usr/local/bin/create_db.sh"]
 
-# Set root password
-RUN service mysql start && \
-    mysql -e "SET PASSWORD FOR 'root'@'localhost' = PASSWORD('${MARIADB_ROOT_PASSWORD}');"
-
+# Start mysql server
+CMD ["mysqld"]
 EXPOSE 3306
-CMD ["mysqld", "--bind-address=0.0.0.0"]
