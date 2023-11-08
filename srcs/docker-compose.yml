@@ -46,7 +46,6 @@ services:
       - inc_network
     volumes:
       - inc_data_wp:/var/www/html
-      - ./requirements/nginx/conf:/etc/nginx/conf.d
 
 networks:
   inc_network:
