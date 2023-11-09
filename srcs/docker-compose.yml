@@ -53,11 +53,11 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: ${VOLUMES_DIR}/wp
+      device: ${DATA_WP}
   inc_data_db:
     name: inc_data_db
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: ${VOLUMES_DIR}/db
+      device: ${DATA_DB}
