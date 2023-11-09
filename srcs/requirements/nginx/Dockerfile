@@ -27,4 +27,4 @@ RUN mkdir -p /etc/nginx/ssl && \
 
 # Start nginx
 CMD ["nginx", "-g", "daemon off;"]
-EXPOSE 80 443
+EXPOSE 443
