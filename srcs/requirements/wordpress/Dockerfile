@@ -12,19 +12,21 @@ RUN apt update && apt install -y --no-install-recommends \
 
 
 # Install php-fpm and extensions
-RUN apt update && apt install -y --no-install-recommends \
-    php7.4-fpm \
-    php7.4-curl \
-    php7.4-dom \
-    php7.4-exif \
-    php7.4-fileinfo \
-    php7.4-json \
-    php7.4-mbstring \
-    php7.4-mysqli \
-    php7.4-xml \
-    php7.4-zip \
-    openssl \
-    && apt clean && rm -rf /var/lib/apt/lists/* && \
+RUN apt update && \
+    apt install -y --no-install-recommends \
+        php7.4-fpm \
+        php7.4-curl \
+        php7.4-dom \
+        php7.4-exif \
+        php7.4-fileinfo \
+        php7.4-json \
+        php7.4-mbstring \
+        php7.4-mysqli \
+        php7.4-xml \
+        php7.4-zip \
+        openssl && \
+    apt clean && \
+    rm -rf /var/lib/apt/lists/* && \
     # Configure PHP-FPM to listen on port 9000
     sed -i 's/^listen = .*/listen = 9000/' /etc/php/7.4/fpm/pool.d/www.conf && \
     # Create directory for php-fpm socket
