@@ -4,8 +4,8 @@ services:
 
   mariadb:
     build: requirements/mariadb
-    image: inc_mariadb
-    container_name: mariadb
+    image: inc_img_mariadb
+    container_name: inc_mariadb
     restart: unless-stopped
     env_file: .env
     networks:
@@ -17,8 +17,8 @@ services:
     depends_on:
       - mariadb
     build: requirements/wordpress
-    image: inc_wordpress
-    container_name: wordpress
+    image: inc_img_wordpress
+    container_name: inc_wordpress
     restart: unless-stopped
     env_file: .env
     networks:
@@ -35,8 +35,8 @@ services:
         - DOMAIN_NAME=${DOMAIN_NAME}
         - CERT_DIR=${CERT_DIR}
         - CERT_SUBJ=${CERT_SUBJ}
-    image: inc_nginx
-    container_name: nginx
+    image: inc_img_nginx
+    container_name: inc_nginx
     restart: unless-stopped
     env_file: .env
     ports:
