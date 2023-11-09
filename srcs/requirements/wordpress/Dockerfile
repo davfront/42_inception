@@ -35,12 +35,14 @@ RUN apt update && \
 # Download wp-cli
 ADD --chmod=755 https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar /usr/bin/wp
 
+# Set working directory
+WORKDIR /var/www/html
+
 # Install wordpress
 COPY ./tools/install_wp.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/install_wp.sh
 ENTRYPOINT ["install_wp.sh"]
 
 # Start php-fpm
-WORKDIR /var/www/html
 CMD ["php-fpm7.4", "-F"]
 EXPOSE 9000

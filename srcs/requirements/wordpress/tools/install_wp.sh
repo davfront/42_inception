@@ -1,6 +1,6 @@
 #!/bin/sh
 
-if [ -f ./var/www/html/wp-config.php ]; then
+if [ -f ./wp-config.php ]; then
 
 	echo "WARNING: wordpress already installed"
 
@@ -34,7 +34,7 @@ else
 		--path=/var/www/html/ --allow-root
 
 	# Adjust permissions
-	chown -R www-data:www-data /var/www/html
+	chown -R www-data:www-data .
 
 	echo "SUCCESS: wordpress installed"
 

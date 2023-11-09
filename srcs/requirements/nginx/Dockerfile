@@ -1,5 +1,9 @@
 FROM debian:buster
 
+ARG DOMAIN_NAME
+ARG CERT_DIR
+ARG CERT_SUBJ
+
 # Install nginx
 RUN apt update && \
     apt install -y --no-install-recommends \
@@ -8,15 +12,18 @@ RUN apt update && \
     apt clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Copy configuration and certificates
-COPY ./conf /etc/nginx/conf.d
+# Copy configuration and substitute variables
+COPY ./conf/nginx.conf.template /etc/nginx/conf.d/
+RUN sed -i "s|\${DOMAIN_NAME}|$DOMAIN_NAME|" /etc/nginx/conf.d/nginx.conf.template && \
+    sed -i "s|\${CERT_DIR}|$CERT_DIR|" /etc/nginx/conf.d/nginx.conf.template && \
+    mv /etc/nginx/conf.d/nginx.conf.template /etc/nginx/conf.d/nginx.conf
 
 # Generate ssl certificates
 RUN mkdir -p /etc/nginx/ssl && \
     openssl req -newkey rsa:4096 -x509 -sha256 -days 365 -nodes \
-       -out /etc/nginx/ssl/dapereir.42.fr.crt \
-       -keyout /etc/nginx/ssl/dapereir.42.fr.key \
-       -subj "/C=FR/ST=Rhône/L=Lyon/O=Ecole42Lyon/OU=IT/CN=dapereir.42.fr/"
+       -out /etc/nginx/ssl/$DOMAIN_NAME.crt \
+       -keyout /etc/nginx/ssl/$DOMAIN_NAME.key \
+       -subj "$CERT_SUBJ"
 
 # Start nginx
 CMD ["nginx", "-g", "daemon off;"]

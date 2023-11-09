@@ -1,0 +1,58 @@
+# HTTP:www => redirect to HTTPS:non-www
+server {
+    listen 80;
+    listen [::]:80;
+    server_name www.${DOMAIN_NAME};
+
+    return 301 https://${DOMAIN_NAME}$request_uri;
+}
+
+# HTTP:non-www => redirect to HTTPS:non-www
+server {
+    listen 80;
+    listen [::]:80;
+    server_name ${DOMAIN_NAME};
+
+    return 301 https://${DOMAIN_NAME}$request_uri;
+}
+
+# HTTPS:www => redirect to HTTPS:non-www
+server {
+    listen 443 ssl;
+    listen [::]:443 ssl;
+    server_name www.${DOMAIN_NAME};
+
+	ssl_certificate     ${CERT_DIR}/${DOMAIN_NAME}.crt;
+	ssl_certificate_key ${CERT_DIR}/${DOMAIN_NAME}.key;
+	ssl_protocols       TLSv1.2 TLSv1.3;
+
+    return 301 https://${DOMAIN_NAME}$request_uri;
+}
+
+# HTTPS:non-www
+server {
+    listen 443 ssl;
+    listen [::]:443 ssl;
+    server_name ${DOMAIN_NAME};
+
+	ssl_certificate     ${CERT_DIR}/${DOMAIN_NAME}.crt;
+	ssl_certificate_key ${CERT_DIR}/${DOMAIN_NAME}.key;
+	ssl_protocols       TLSv1.2 TLSv1.3;
+
+    root /var/www/html;
+    index index.php index.html index.htm;
+
+    location / {
+        try_files $uri $uri/ /index.php$is_args$args;
+    }
+
+    location ~ \.php$ {
+        try_files $uri =404;
+        fastcgi_split_path_info ^(.+\.php)(/.+)$;
+        fastcgi_pass wordpress:9000;
+        fastcgi_index index.php;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        fastcgi_param PATH_INFO $fastcgi_path_info;
+    }
+}

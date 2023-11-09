@@ -29,7 +29,12 @@ services:
   nginx:
     depends_on:
       - wordpress
-    build: requirements/nginx
+    build:
+      context: requirements/nginx
+      args:
+        - DOMAIN_NAME=${DOMAIN_NAME}
+        - CERT_DIR=${CERT_DIR}
+        - CERT_SUBJ=${CERT_SUBJ}
     image: inc_nginx
     container_name: nginx
     restart: unless-stopped
@@ -47,13 +52,6 @@ networks:
     name: inc_network
 
 volumes:
-  inc_data_wp:
-    name: inc_data_wp
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ${DATA_WP}
   inc_data_db:
     name: inc_data_db
     driver: local
@@ -61,3 +59,10 @@ volumes:
       type: none
       o: bind
       device: ${DATA_DB}
+  inc_data_wp:
+    name: inc_data_wp
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${DATA_WP}
