@@ -34,8 +34,8 @@ clean:
 	-docker rm $$(docker ps -a -q)
 	-docker rmi $$(docker images -q)
 	-docker volume rm $$(docker volume ls -q)
-	-docker network rm $$(docker network ls -q)
-	-docker builder prune -a -f
+	-docker network rm $$(docker network ls -q) 2>/dev/null
+	-docker buildx prune -a -f
 
 .PHONY: clean-eval
 clean-eval:
