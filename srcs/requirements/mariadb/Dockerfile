@@ -14,5 +14,5 @@ RUN chmod +x /usr/local/bin/create_db.sh
 ENTRYPOINT ["/usr/local/bin/create_db.sh"]
 
 # Start mysql server
-CMD ["mysqld"]
+CMD ["mysqld_safe"]
 EXPOSE 3306
