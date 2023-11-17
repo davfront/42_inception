@@ -1,7 +1,11 @@
+include srcs/.env
+export
+
 all: up
 
 .PHONY: up
 up:
+	mkdir -p ${DATA_DB} ${DATA_WP}
 	docker compose -f srcs/docker-compose.yml up -d --build
 
 .PHONY: stop
@@ -10,10 +14,6 @@ stop:
 
 .PHONY: down
 down:
-	docker compose -f srcs/docker-compose.yml down
-
-.PHONY: down-v
-down-v:
 	docker compose -f srcs/docker-compose.yml down -v
 
 .PHONY: logs
@@ -35,7 +35,8 @@ clean:
 	-docker rmi $$(docker images -q)
 	-docker volume rm $$(docker volume ls -q)
 	-docker network rm $$(docker network ls -q) 2>/dev/null
-	-docker buildx prune -a -f
+	-docker buildx prune -a -f 2>/dev/null
+	sudo rm -rf ${DATA_DB} ${DATA_WP}
 
 .PHONY: clean-eval
 clean-eval:
